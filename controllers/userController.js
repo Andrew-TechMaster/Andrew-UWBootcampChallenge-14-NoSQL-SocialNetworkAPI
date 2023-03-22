@@ -5,7 +5,7 @@ module.exports = {
    * Get all users
    */
   getUsers(req, res) {
-    User.find()
+    User.find({})
       .then((users) => res.json(users))
       .catch((err) => res.status(500).json(err));
   },
@@ -56,11 +56,13 @@ module.exports = {
           ? res.status(404).json({ message: "No user with that ID" })
           : Thought.deleteMany({ _id: { $in: user.thoughts } })
       )
-      .then(() => res.json({ message: "User and associated apps deleted!" }))
+      .then(() =>
+        res.json({ message: "User and associated thoughts deleted!" })
+      )
       .catch((err) => res.status(500).json(err));
   },
   /**
-   * Adds a friend to an application.
+   * Add a friend to a user.
    */
   addFriend(req, res) {
     User.findOneAndUpdate(

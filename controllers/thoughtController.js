@@ -7,13 +7,16 @@ module.exports = {
   getThoughts(req, res) {
     Thought.find()
       .then((thoughts) => res.json(thoughts))
-      .catch((err) => res.status(500).json(err));
+      .catch((err) => {
+        console.log(err);
+        res.status(500).json(err);
+      });
   },
   /**
    * Get a single thought by id
    */
   getSingleThought(req, res) {
-    Thought.findOne({ _id: req.params.userId })
+    Thought.findOne({ _id: req.params.thoughtId })
       .select("-__v")
       .then((user) =>
         !user
@@ -47,14 +50,14 @@ module.exports = {
    */
   updateThought(req, res) {
     Thought.findOneAndUpdate(
-      { _id: req.params.courseId },
+      { _id: req.params.thoughtId },
       { $set: req.body },
       { runValidators: true, new: true }
     )
       .then((thought) =>
         !thought
           ? res.status(404).json({ message: "No thought with this id!" })
-          : res.json(user)
+          : res.json(thought)
       )
       .catch((err) => res.status(500).json(err));
   },
@@ -62,13 +65,13 @@ module.exports = {
    * Delete a thought by id
    */
   deleteThought(req, res) {
-    Thought.findOneAndDelete({ _id: req.params.userId })
+    Thought.findOneAndDelete({ _id: req.params.thoughtId })
       .then((thought) =>
         !thought
           ? res.status(404).json({ message: "No thought with that ID" })
           : User.findOneAndUpdate(
-              { applications: req.params.applicationId },
-              { $pull: { applications: req.params.applicationId } },
+              { thoughts: req.params.thoughtId },
+              { $pull: { thoughts: req.params.thoughtId } },
               { new: true }
             )
       )
@@ -105,7 +108,7 @@ module.exports = {
   removeReaction(req, res) {
     Thought.findOneAndUpdate(
       { _id: req.params.thoughtId },
-      { $pull: { reactions: { reactionId: req.params.thoughtId } } },
+      { $pull: { reactions: { reactionId: req.body.reactionId } } },
       { runValidators: true, new: true }
     )
       .then((thought) =>

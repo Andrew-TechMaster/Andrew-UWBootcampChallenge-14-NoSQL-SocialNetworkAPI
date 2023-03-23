@@ -21,14 +21,14 @@ router.route("/").get(getThoughts).post(createThought);
  * [DELETE] /api/thoughts/:userId
  */
 router
-  .route("/:userId")
+  .route("/:thoughtId")
   .get(getSingleThought)
   .put(updateThought)
   .delete(deleteThought);
 
 /**
  * [POST] /api/thoughts/:thoughtId/reactions
- * [DELETE] /api/thoughts/:thoughtId/reactions
+ * [DELETE] /api/thoughts/:thoughtId/reactions (pass reactionId by req.body)
  */
 router.route("/:thoughtId/reactions").post(addReaction).delete(removeReaction);
 
